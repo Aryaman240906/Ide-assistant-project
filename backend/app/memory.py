@@ -1,5 +1,10 @@
 from neo4j import GraphDatabase
 from datetime import datetime
+from sentence_transformers import SentenceTransformer
+
+# Load a lightweight, fast SentenceTransformer model
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
 
 # Neo4j connection URI and credentials
 NEO4J_URI = "bolt://localhost:7687"
@@ -37,3 +42,10 @@ def save_message_to_neo4j(message_text: str, source: str = "user"):
             source=source,
             timestamp=timestamp,
         )
+
+def embed_message(text: str):
+    """
+    Returns a 768‑dimensional embedding list for the given text.
+    """
+    embedding = model.encode(text, convert_to_numpy=True)
+    return embedding.tolist()

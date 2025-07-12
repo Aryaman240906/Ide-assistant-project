@@ -1,4 +1,5 @@
 from app.memory import save_message_to_neo4j
+from app.memory import save_message_to_neo4j, embed_message
 from app.models import Message
 from fastapi import FastAPI
 from dotenv import load_dotenv
@@ -26,6 +27,9 @@ def send_message(payload: Message):
 
     # 1️⃣ Save the incoming message to Neo4j
     save_message_to_neo4j(user_prompt)
+        # Embed the prompt (print first 5 values for preview)
+    embedding = embed_message(user_prompt)
+    print(f"Embedding for '{user_prompt}': {embedding[:5]}...")
 
     # 2️⃣ Choose a random reply prefix
     responses = [

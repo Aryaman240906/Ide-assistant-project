@@ -1,3 +1,4 @@
+from app.models import Message
 from fastapi import FastAPI
 from dotenv import load_dotenv
 import os
@@ -18,12 +19,11 @@ def ping_server():
     return {"status": "Backend is alive!"}
 
 @app.post("/send")
-def send_message():
+def send_message(payload: Message):
     """
-    Placeholder for receiving user prompts.
-    Currently returns a static confirmation.
+    payload.message now holds the user's input string.
     """
-    return {"message": "Received your prompt!"}
+    return {"you_sent": payload.message}
 
 @app.get("/config")
 def read_config():

@@ -2,6 +2,7 @@ from app.models import Message
 from fastapi import FastAPI
 from dotenv import load_dotenv
 import os
+import random
 
 load_dotenv()
 
@@ -20,10 +21,23 @@ def ping_server():
 
 @app.post("/send")
 def send_message(payload: Message):
-    """
-    payload.message now holds the user's input string.
-    """
-    return {"you_sent": payload.message}
+    user_prompt = payload.message
+
+    # Simulated AI responses
+    responses = [
+        "Let me look that up for you...",
+        "Here's something you might find useful:",
+        "Interesting! Give me a second to process that.",
+        "Sure! Here's what I found for:"
+    ]
+    chosen = random.choice(responses)
+
+    fake_response = f"💬 {chosen} '{user_prompt}'"
+
+    return {
+        "input": user_prompt,
+        "response": fake_response
+    }
 
 @app.get("/config")
 def read_config():

@@ -1,3 +1,4 @@
+from app.memory import save_message_to_neo4j
 from app.models import Message
 from fastapi import FastAPI
 from dotenv import load_dotenv
@@ -23,15 +24,17 @@ def ping_server():
 def send_message(payload: Message):
     user_prompt = payload.message
 
-    # Simulated AI responses
+    # 1️⃣ Save the incoming message to Neo4j
+    save_message_to_neo4j(user_prompt)
+
+    # 2️⃣ Choose a random reply prefix
     responses = [
         "Let me look that up for you...",
-        "Here's something you might find useful:",
+        "Here's something you might find useful for:",
         "Interesting! Give me a second to process that.",
         "Sure! Here's what I found for:"
     ]
     chosen = random.choice(responses)
-
     fake_response = f"💬 {chosen} '{user_prompt}'"
 
     return {

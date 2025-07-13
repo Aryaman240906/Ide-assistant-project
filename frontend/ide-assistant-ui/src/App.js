@@ -8,8 +8,7 @@ function App() {
   const sendMessage = async () => {
     if (!userMessage.trim()) return;
 
-    // 👩‍💻 Add user's message to chat first
-    const timestamp = new Date().toLocaleTimeString(); // 🕒 makes a tiny clock!
+    const timestamp = new Date().toLocaleTimeString(); // 🕒 Add time to user's msg
 
     const newHistory = [
       ...chatHistory,
@@ -21,29 +20,26 @@ function App() {
     ];
 
     try {
-      // 📤 Send the message to backend
       const res = await API.post("/send", { message: userMessage });
 
-      // 🤖 Add AI response to chat history
       newHistory.push({
         from: "ai",
         text: res.data.response,
-        timestamp: new Date().toLocaleTimeString(), // ⏰ for AI too!
+        timestamp: new Date().toLocaleTimeString(),
       });
 
-
-      // 💾 Save the updated chat
       setChatHistory(newHistory);
       console.log("Chat History:", newHistory);
 
-
-      // ✨ Clear the input box
-      setUserMessage("");
+      setUserMessage(""); // Clear input
     } catch (error) {
       console.error("Error:", error);
 
-      // ⚠️ Show error if backend fails
-      newHistory.push({ from: "ai", text: "⚠️ Failed to reach backend." });
+      newHistory.push({
+        from: "ai",
+        text: "⚠️ Failed to reach backend.",
+        timestamp: new Date().toLocaleTimeString(),
+      });
       setChatHistory(newHistory);
     }
   };
@@ -90,21 +86,50 @@ function App() {
         Send
       </button>
 
-      {/* 💬 CHAT BUBBLES DISPLAY */}
-      <div style={{ marginTop: "30px", width: "70%" }}>
+      {/* ✅ Upgraded Dynamic Message Bubbles */}
+      <div
+        style={{
+          marginTop: "30px",
+          width: "80%",
+          maxHeight: "400px",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
         {chatHistory.map((msg, index) => (
           <div
             key={index}
             style={{
-              background: msg.from === "user" ? "#DCF8C6" : "#f1f1f1",
+              alignSelf: msg.from === "user" ? "flex-end" : "flex-start",
+              background: msg.from === "user" ? "#DCF8C6" : "#F1F0F0",
               padding: "10px 15px",
               borderRadius: "12px",
-              marginBottom: "10px",
-              alignSelf: msg.from === "user" ? "flex-end" : "flex-start",
-              textAlign: "left",
+              maxWidth: "70%",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
             }}
           >
-            <strong>{msg.from === "user" ? "You" : "AI"}:</strong> {msg.text}
+            <div
+              style={{
+                fontSize: "14px",
+                fontWeight: "bold",
+                marginBottom: "5px",
+              }}
+            >
+              {msg.from === "user" ? "You" : "AI Assistant"}
+            </div>
+            <div style={{ fontSize: "16px" }}>{msg.text}</div>
+            <div
+              style={{
+                fontSize: "12px",
+                marginTop: "5px",
+                textAlign: "right",
+                color: "#888",
+              }}
+            >
+              {msg.timestamp}
+            </div>
           </div>
         ))}
       </div>

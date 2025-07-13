@@ -9,17 +9,33 @@ function App() {
     if (!userMessage.trim()) return;
 
     // 👩‍💻 Add user's message to chat first
-    const newHistory = [...chatHistory, { from: "user", text: userMessage }];
+    const timestamp = new Date().toLocaleTimeString(); // 🕒 makes a tiny clock!
+
+    const newHistory = [
+      ...chatHistory,
+      {
+        from: "user",
+        text: userMessage,
+        timestamp: timestamp,
+      },
+    ];
 
     try {
       // 📤 Send the message to backend
       const res = await API.post("/send", { message: userMessage });
 
       // 🤖 Add AI response to chat history
-      newHistory.push({ from: "ai", text: res.data.response });
+      newHistory.push({
+        from: "ai",
+        text: res.data.response,
+        timestamp: new Date().toLocaleTimeString(), // ⏰ for AI too!
+      });
+
 
       // 💾 Save the updated chat
       setChatHistory(newHistory);
+      console.log("Chat History:", newHistory);
+
 
       // ✨ Clear the input box
       setUserMessage("");

@@ -1,9 +1,15 @@
+import { useEffect, useRef } from "react";
 import React, { useState } from "react";
 import API from "./api";
 
 function App() {
   const [userMessage, setUserMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]); // Array of chat objects
+  const bottomRef = useRef(null);
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatHistory]);
+
 
   const sendMessage = async () => {
     if (!userMessage.trim()) return;
@@ -132,6 +138,8 @@ function App() {
             </div>
           </div>
         ))}
+        <div ref={bottomRef}></div>
+
       </div>
     </div>
   );

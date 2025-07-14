@@ -4,18 +4,19 @@ import API from "./api";
 
 function App() {
   const [userMessage, setUserMessage] = useState("");
-  const [chatHistory, setChatHistory] = useState([]); // Array of chat objects
+  const inputRef = useRef(null);
+  const [chatHistory, setChatHistory] = useState([]);
   const bottomRef = useRef(null);
+  const [isThinking, setIsThinking] = useState(false);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
 
-
   const sendMessage = async () => {
     if (!userMessage.trim()) return;
 
-    const timestamp = new Date().toLocaleTimeString(); // 🕒 Add time to user's msg
-
+    const timestamp = new Date().toLocaleTimeString();
     const newHistory = [
       ...chatHistory,
       {
@@ -24,6 +25,8 @@ function App() {
         timestamp: timestamp,
       },
     ];
+
+    setIsThinking(true);
 
     try {
       const res = await API.post("/send", { message: userMessage });
@@ -35,18 +38,17 @@ function App() {
       });
 
       setChatHistory(newHistory);
-      console.log("Chat History:", newHistory);
-
-      setUserMessage(""); // Clear input
+      setUserMessage("");
+      inputRef.current?.focus();
     } catch (error) {
-      console.error("Error:", error);
-
       newHistory.push({
         from: "ai",
         text: "⚠️ Failed to reach backend.",
         timestamp: new Date().toLocaleTimeString(),
       });
       setChatHistory(newHistory);
+    } finally {
+      setIsThinking(false);
     }
   };
 
@@ -64,6 +66,7 @@ function App() {
       <h1>💬 IDE Assistant Chat</h1>
 
       <input
+        ref={inputRef}
         type="text"
         value={userMessage}
         onChange={(e) => setUserMessage(e.target.value)}
@@ -92,7 +95,18 @@ function App() {
         Send
       </button>
 
-      {/* ✅ Upgraded Dynamic Message Bubbles */}
+      {isThinking && (
+        <div
+          style={{
+            marginTop: "10px",
+            fontStyle: "italic",
+            color: "#888",
+          }}
+        >
+          AI Assistant is typing...
+        </div>
+      )}
+
       <div
         style={{
           marginTop: "30px",
@@ -125,7 +139,19 @@ function App() {
             >
               {msg.from === "user" ? "You" : "AI Assistant"}
             </div>
-            <div style={{ fontSize: "16px" }}>{msg.text}</div>
+
+            {/* ✅ MULTILINE FORMATTED TEXT */}
+            <div
+              style={{
+                fontSize: "16px",
+                whiteSpace: "pre-line",
+                overflowWrap: "break-word",
+                wordBreak: "break-word",
+              }}
+            >
+              {msg.text}
+            </div>
+
             <div
               style={{
                 fontSize: "12px",
@@ -139,7 +165,6 @@ function App() {
           </div>
         ))}
         <div ref={bottomRef}></div>
-
       </div>
     </div>
   );

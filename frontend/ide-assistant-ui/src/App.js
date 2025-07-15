@@ -18,11 +18,23 @@ function App() {
   const inputRef = useRef(null);
   const [chatHistory, setChatHistory] = useState([]);
   const bottomRef = useRef(null);
-  const [isThinking, setIsThinking] = useState(false); // ✅ Step 1 done
+  const [isThinking, setIsThinking] = useState(false);
+  const [loaderDots, setLoaderDots] = useState("."); // ✅ Step 1: animated dots
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
+
+  // ✅ Step 1: animated loader dot logic
+  useEffect(() => {
+    if (!isThinking) return;
+
+    const interval = setInterval(() => {
+      setLoaderDots((prev) => (prev.length < 3 ? prev + "." : "."));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [isThinking]);
 
   const sendMessage = async () => {
     if (!userMessage.trim()) return;
@@ -37,7 +49,7 @@ function App() {
       },
     ];
 
-    setIsThinking(true); // ✅ Step 2
+    setIsThinking(true);
 
     try {
       const res = await API.post("/send", { message: userMessage });
@@ -59,7 +71,7 @@ function App() {
       });
       setChatHistory(newHistory);
     } finally {
-      setIsThinking(false); // ✅ Step 2
+      setIsThinking(false);
     }
   };
 
@@ -200,7 +212,7 @@ function App() {
         <div ref={bottomRef}></div>
       </div>
 
-      {/* ✅ Step 3: AI is thinking indicator */}
+      {/* ✅ Step 2: Animated AI is thinking... */}
       {isThinking && (
         <div
           style={{
@@ -211,7 +223,7 @@ function App() {
             paddingLeft: "10px",
           }}
         >
-          AI is thinking...
+          AI is thinking{loaderDots}
         </div>
       )}
 

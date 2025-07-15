@@ -2,6 +2,17 @@ import { useEffect, useRef } from "react";
 import React, { useState } from "react";
 import API from "./api";
 
+function formatLine(line) {
+  const boldRegex = /\*\*(.*?)\*\*/g;
+  const parts = line.split(boldRegex);
+  return parts.map((part, i) => {
+    if (i % 2 === 1) {
+      return <strong key={i}>{part}</strong>;
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 function App() {
   const [userMessage, setUserMessage] = useState("");
   const inputRef = useRef(null);
@@ -140,7 +151,7 @@ function App() {
               {msg.from === "user" ? "You" : "AI Assistant"}
             </div>
 
-            {/* ✅ Smart rendering for AI replies */}
+            {/* ✅ Smart rendering for AI replies with bold formatting */}
             {msg.from === "ai" ? (
               <div style={{ fontSize: "15px", lineHeight: "1.5" }}>
                 {msg.text.split("\n").map((line, idx) => {
@@ -156,7 +167,7 @@ function App() {
                           fontFamily: "monospace",
                         }}
                       >
-                        {line}
+                        {formatLine(line)}
                       </div>
                     );
                   } else if (line.startsWith("🧠")) {
@@ -170,7 +181,7 @@ function App() {
                           color: "#0c5460",
                         }}
                       >
-                        {line}
+                        {formatLine(line)}
                       </div>
                     );
                   } else if (line.startsWith("→")) {
@@ -186,7 +197,7 @@ function App() {
                           borderLeft: "4px solid #28a745",
                         }}
                       >
-                        {line}
+                        {formatLine(line)}
                       </div>
                     );
                   } else {
@@ -198,7 +209,7 @@ function App() {
                           wordBreak: "break-word",
                         }}
                       >
-                        {line}
+                        {formatLine(line)}
                       </div>
                     );
                   }

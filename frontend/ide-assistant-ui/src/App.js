@@ -19,13 +19,13 @@ function App() {
   const [chatHistory, setChatHistory] = useState([]);
   const bottomRef = useRef(null);
   const [isThinking, setIsThinking] = useState(false);
-  const [loaderDots, setLoaderDots] = useState("."); // ✅ Step 1: animated dots
+  const [loaderDots, setLoaderDots] = useState("."); // ✅ loader
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatHistory]);
 
-  // ✅ Step 1: animated loader dot logic
+  // ✅ Animated dots logic
   useEffect(() => {
     if (!isThinking) return;
 
@@ -121,68 +121,28 @@ function App() {
               {msg.from === "user" ? "You" : "AI Assistant"}
             </div>
 
+            {/* ✅ Step 1 of Module 3: Highlight warning messages */}
             {msg.from === "ai" ? (
-              <div style={{ fontSize: "15px", lineHeight: "1.5" }}>
-                {msg.text.split("\n").map((line, idx) => {
-                  if (line.startsWith("•")) {
-                    return (
-                      <div
-                        key={idx}
-                        style={{
-                          backgroundColor: "#f0f8ff",
-                          padding: "4px 8px",
-                          margin: "2px 0",
-                          borderRadius: "6px",
-                          fontFamily: "monospace",
-                        }}
-                      >
-                        {formatLine(line)}
-                      </div>
-                    );
-                  } else if (line.startsWith("🧠")) {
-                    return (
-                      <div
-                        key={idx}
-                        style={{
-                          marginTop: "10px",
-                          fontWeight: "bold",
-                          fontSize: "16px",
-                          color: "#0c5460",
-                        }}
-                      >
-                        {formatLine(line)}
-                      </div>
-                    );
-                  } else if (line.startsWith("→")) {
-                    return (
-                      <div
-                        key={idx}
-                        style={{
-                          backgroundColor: "#e2f0d9",
-                          padding: "6px 10px",
-                          borderRadius: "6px",
-                          marginTop: "5px",
-                          fontFamily: "monospace",
-                          borderLeft: "4px solid #28a745",
-                        }}
-                      >
-                        {formatLine(line)}
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div
-                        key={idx}
-                        style={{
-                          whiteSpace: "pre-wrap",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {formatLine(line)}
-                      </div>
-                    );
-                  }
-                })}
+              <div
+                style={{
+                  fontSize: "15px",
+                  lineHeight: "1.5",
+                  padding: "10px",
+                  borderRadius: "10px",
+                  maxWidth: "70%",
+                  backgroundColor: msg.text.startsWith("⚠️") || msg.text.startsWith("⏱️")
+                    ? "#fff3cd" // yellow background
+                    : "#f1f0f0", // normal gray
+                  borderLeft: msg.text.startsWith("⚠️") || msg.text.startsWith("⏱️")
+                    ? "4px solid #ffc107" // yellow bar
+                    : "none",
+                  color: msg.text.startsWith("⚠️") || msg.text.startsWith("⏱️")
+                    ? "#856404" // dark yellow text
+                    : "#000",
+                  fontFamily: "monospace",
+                }}
+              >
+                {msg.text}
               </div>
             ) : (
               <div
@@ -196,6 +156,7 @@ function App() {
                 {msg.text}
               </div>
             )}
+
 
             <div
               style={{
@@ -212,7 +173,7 @@ function App() {
         <div ref={bottomRef}></div>
       </div>
 
-      {/* ✅ Step 2: Animated AI is thinking... */}
+      {/* ✅ Typing indicator */}
       {isThinking && (
         <div
           style={{

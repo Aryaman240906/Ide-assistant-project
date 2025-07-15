@@ -121,7 +121,7 @@ function App() {
               {msg.from === "user" ? "You" : "AI Assistant"}
             </div>
 
-            {/* ✅ Step 1 of Module 3: Highlight warning messages */}
+            {/* ✅ Step 1 of Module 3: Highlight warning messages heh*/}
             {msg.from === "ai" ? (
               <div
                 style={{

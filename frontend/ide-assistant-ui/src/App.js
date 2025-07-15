@@ -18,7 +18,7 @@ function App() {
   const inputRef = useRef(null);
   const [chatHistory, setChatHistory] = useState([]);
   const bottomRef = useRef(null);
-  const [isThinking, setIsThinking] = useState(false);
+  const [isThinking, setIsThinking] = useState(false); // ✅ Step 1 done
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -37,7 +37,7 @@ function App() {
       },
     ];
 
-    setIsThinking(true);
+    setIsThinking(true); // ✅ Step 2
 
     try {
       const res = await API.post("/send", { message: userMessage });
@@ -59,7 +59,7 @@ function App() {
       });
       setChatHistory(newHistory);
     } finally {
-      setIsThinking(false);
+      setIsThinking(false); // ✅ Step 2
     }
   };
 
@@ -75,48 +75,6 @@ function App() {
       }}
     >
       <h1>💬 IDE Assistant Chat</h1>
-
-      <input
-        ref={inputRef}
-        type="text"
-        value={userMessage}
-        onChange={(e) => setUserMessage(e.target.value)}
-        placeholder="Type your message..."
-        style={{
-          width: "70%",
-          padding: "10px",
-          fontSize: "16px",
-          marginTop: "20px",
-        }}
-      />
-
-      <button
-        onClick={sendMessage}
-        style={{
-          marginLeft: "10px",
-          padding: "10px 20px",
-          fontSize: "16px",
-          background: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "5px",
-          marginTop: "10px",
-        }}
-      >
-        Send
-      </button>
-
-      {isThinking && (
-        <div
-          style={{
-            marginTop: "10px",
-            fontStyle: "italic",
-            color: "#888",
-          }}
-        >
-          AI Assistant is typing...
-        </div>
-      )}
 
       <div
         style={{
@@ -151,7 +109,6 @@ function App() {
               {msg.from === "user" ? "You" : "AI Assistant"}
             </div>
 
-            {/* ✅ Smart rendering for AI replies with bold formatting */}
             {msg.from === "ai" ? (
               <div style={{ fontSize: "15px", lineHeight: "1.5" }}>
                 {msg.text.split("\n").map((line, idx) => {
@@ -242,6 +199,51 @@ function App() {
         ))}
         <div ref={bottomRef}></div>
       </div>
+
+      {/* ✅ Step 3: AI is thinking indicator */}
+      {isThinking && (
+        <div
+          style={{
+            marginTop: "10px",
+            fontStyle: "italic",
+            color: "#888",
+            alignSelf: "flex-start",
+            paddingLeft: "10px",
+          }}
+        >
+          AI is thinking...
+        </div>
+      )}
+
+      <input
+        ref={inputRef}
+        type="text"
+        value={userMessage}
+        onChange={(e) => setUserMessage(e.target.value)}
+        placeholder="Type your message..."
+        style={{
+          width: "70%",
+          padding: "10px",
+          fontSize: "16px",
+          marginTop: "20px",
+        }}
+      />
+
+      <button
+        onClick={sendMessage}
+        style={{
+          marginLeft: "10px",
+          padding: "10px 20px",
+          fontSize: "16px",
+          background: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          marginTop: "10px",
+        }}
+      >
+        Send
+      </button>
     </div>
   );
 }

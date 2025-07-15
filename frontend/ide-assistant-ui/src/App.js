@@ -140,17 +140,82 @@ function App() {
               {msg.from === "user" ? "You" : "AI Assistant"}
             </div>
 
-            {/* ✅ MULTILINE FORMATTED TEXT */}
-            <div
-              style={{
-                fontSize: "16px",
-                whiteSpace: "pre-line",
-                overflowWrap: "break-word",
-                wordBreak: "break-word",
-              }}
-            >
-              {msg.text}
-            </div>
+            {/* ✅ Smart rendering for AI replies */}
+            {msg.from === "ai" ? (
+              <div style={{ fontSize: "15px", lineHeight: "1.5" }}>
+                {msg.text.split("\n").map((line, idx) => {
+                  if (line.startsWith("•")) {
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          backgroundColor: "#f0f8ff",
+                          padding: "4px 8px",
+                          margin: "2px 0",
+                          borderRadius: "6px",
+                          fontFamily: "monospace",
+                        }}
+                      >
+                        {line}
+                      </div>
+                    );
+                  } else if (line.startsWith("🧠")) {
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          marginTop: "10px",
+                          fontWeight: "bold",
+                          fontSize: "16px",
+                          color: "#0c5460",
+                        }}
+                      >
+                        {line}
+                      </div>
+                    );
+                  } else if (line.startsWith("→")) {
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          backgroundColor: "#e2f0d9",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                          marginTop: "5px",
+                          fontFamily: "monospace",
+                          borderLeft: "4px solid #28a745",
+                        }}
+                      >
+                        {line}
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          whiteSpace: "pre-wrap",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {line}
+                      </div>
+                    );
+                  }
+                })}
+              </div>
+            ) : (
+              <div
+                style={{
+                  fontSize: "16px",
+                  whiteSpace: "pre-line",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                }}
+              >
+                {msg.text}
+              </div>
+            )}
 
             <div
               style={{
